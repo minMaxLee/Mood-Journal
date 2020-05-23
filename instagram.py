@@ -39,8 +39,8 @@ for con in arr:
                 mood.append(int(rank))
             else:
                 continue
-            cur_time = con['taken_at']
-            time.append(cur_time)
+            
+            time.append(con['taken_at'])
             text.append(description)
 
             # label as positive, zero, negative
@@ -114,4 +114,3 @@ print(cross_val_score(guassian, X.todense(), y, cv=5))
 #Use Facebook Prophet? 
 # plt.plot(time, mood)
 # plt.show()
-# https://machinelearningmastery.com/time-series-forecasting-supervised-learning/
