@@ -8,6 +8,12 @@ from sklearn.svm import LinearSVC
 import re
 from nltk.stem.porter import PorterStemmer
 
+
+import requests
+request = requests.get("https://api.instagram.com/v1/users/self/media/recent/?access_token=ACCESS-TOKEN")
+print(request.status_code)
+
+
 #extract json file into python 
 with open(os.path.dirname(__file__) + '../media.json') as f:
     data = json.load(f)
@@ -86,7 +92,7 @@ vectorizer = CountVectorizer(preprocessor= my_preprocessor, min_df=0.01)
 X = vectorizer.fit_transform(texts)
 
 #filtering out words
-print(vectorizer.get_feature_names())
+# print(vectorizer.get_feature_names())
 print("size: " + str(X.shape))
 
 from sklearn.model_selection import cross_val_score
