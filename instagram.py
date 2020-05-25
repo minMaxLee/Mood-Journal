@@ -10,9 +10,11 @@ from nltk.stem.porter import PorterStemmer
 
 
 import requests
-request = requests.get("https://api.instagram.com/v1/users/self/media/recent/?access_token=ACCESS-TOKEN")
+token = "IGQVJYM0RBVC1nSFRvMHh0VVhfN3NnYUdQNHhBQUtTVVctMDd5MUk5VW1CdUFLX19ldHRTNTFmRUtWY0VFUE9jbWYyaWxqYWVXVkFwM1pFakZAKNHVtREpwRlJRNFRWLTJtUnNYRVdYX295ZAUYxQ2o1SAZDZD"
+access_token = "IGQVJWTTR3bXRqQ2hMNXJYNTEtSmhSc2JxUzdtVElWWXR5UWh5dVo5YXlEd0FrQTBtQUU0WUtUbE9pUW1JSk1BcEtiOWNVekpkdWxjYjNlTTRacjhqWmN1bnZABRlRNVnFXejVVbU5NckdZAOW05N09QcAZDZD"
+request = requests.get("https://api.instagram.com/v1/users/self/media/recent/?access_token=token")
 print(request.status_code)
-
+print(request.content)
 
 #extract json file into python 
 with open(os.path.dirname(__file__) + '../media.json') as f:
