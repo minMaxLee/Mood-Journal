@@ -81,7 +81,7 @@ y = df['Label']
 
 porter_stemmer = PorterStemmer()
 def my_preprocessor(text):
-    # text = re.sub("\\W", " ", text)
+    text = re.sub("\\W", " ", text)
     words = re.sub(r"[^A-Za-z0-9\-]", " ", text).lower().split()
     words = [porter_stemmer.stem(word) for word in words]
     return ' '.join(words)
@@ -89,7 +89,7 @@ def my_preprocessor(text):
 #using min_df=0.01 as there are 162 documents (rows), so will be accepted if appears more than once
 #strip_accents to remove Korean words
 #preprocessor = 
-vectorizer = CountVectorizer(preprocessor= my_preprocessor, min_df=0.01)
+vectorizer = CountVectorizer(stop_words= 'english', min_df=0.01)
 X = vectorizer.fit_transform(texts)
 
 #filtering out words
@@ -99,15 +99,33 @@ print("size: " + str(X.shape))
 from sklearn.model_selection import cross_val_score
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
+from sklearn.linear_model import LogisticRegression
 
 model = LinearSVC(class_weight='balanced', dual= False, tol = 1e-2, max_iter= 1e5)
 print(cross_val_score(model, X, y, cv=5))
+print("SVC: ", cross_val_score(model, X, y, cv=5).mean())
 
 tree = DecisionTreeClassifier(criterion = 'entropy')
 print(cross_val_score(tree, X, y, cv=5))
+print("tree: ", cross_val_score(tree, X, y, cv=5).mean())
 
 guassian = GaussianNB()
 print(cross_val_score(guassian, X.todense(), y, cv=5))
+print("naive: ", cross_val_score(guassian, X.todense(), y, cv=5).mean())
+
+regression = LogisticRegression()
+print("regressin: ", cross_val_score(regression, X, y, cv = 5).mean())
+
+
+#checking most popular words associated with good and bad mood
+final_model = regression
+final_model.fit(X, y)
+feature_to_coef = {word: coef for word, coef in zip(vectorizer.get_feature_names(), final_model.coef_[0])}
+for best_positive in sorted(feature_to_coef.items(), key=lambda x: x[1], reverse=True)[:5]:
+    print (best_positive)
+
+for best_negative in sorted(feature_to_coef.items(), key=lambda x: x[1])[:5]:
+    print (best_negative)
 
 
 #lemmatization of words
