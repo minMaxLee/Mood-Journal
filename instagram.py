@@ -9,12 +9,6 @@ import re
 from nltk.stem.porter import PorterStemmer
 
 
-import requests
-token = "IGQVJVajE2RlZAjUzdSTE1fTVFieTZAvRXE3cmk0STJFbGZAoQjNZALXlwZAEVET1VsYnZAiQkRYLURXWVZAyV3BkQndOTkNiYjRkdk5JaHgtd2pRWkloaXgwRklxRjRyakRUTlE4aGFQNjZACb1JGd2VRenJFMQZDZD"
-response = requests.get("https://api.instagram.com/v1/users/self/media/recent/")
-print(response.status_code)
-# print(response.content)
-
 #extract json file into python 
 with open(os.path.dirname(__file__) + '../media.json') as f:
     data = json.load(f)
@@ -79,6 +73,9 @@ df = pd.DataFrame(data)
 texts = df['Text'].astype(str)
 y = df['Label']
 
+
+
+#using stemming to reduce word counts 
 porter_stemmer = PorterStemmer()
 def my_preprocessor(text):
     text = re.sub("\\W", " ", text)
@@ -88,7 +85,7 @@ def my_preprocessor(text):
 #vectorize the text (bag of words)
 #using min_df=0.01 as there are 162 documents (rows), so will be accepted if appears more than once
 #strip_accents to remove Korean words
-#preprocessor = 
+#preprocessor = my_preprocessor -> lower accuracy
 vectorizer = CountVectorizer(stop_words= 'english', min_df=0.01)
 X = vectorizer.fit_transform(texts)
 
