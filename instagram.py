@@ -18,9 +18,7 @@ arr.reverse()
 
 mood = []
 time = []
-
 text = []
-
 data = {'Text': [],
         'Label': [] }
 
@@ -28,9 +26,10 @@ data = {'Text': [],
 for con in arr:
     caption = con['caption']
     if len(caption) != 0:
-        if caption.find('[') != -1 and caption.find(']') != -1:
-            rank = caption[caption.index('[') + 1 : caption.index(']')]
+        if caption.find('[') != -1 and caption.find(']') != -1 and con['taken_at'] not in time:
+            rank = caption[caption.index('[') + 1 : caption.index(']') ]
             description = caption[caption.index(']') + 1 : ]
+            time.append(con['taken_at'])
             # parsing mood label into integer
             if '+' in rank:
                 mood.append(int(rank))
@@ -40,9 +39,6 @@ for con in arr:
                 mood.append(int(rank))
             else:
                 continue
-            
-            time.append(con['taken_at'])
-            text.append(description)
 
             # label as positive, zero, negative
             rank = int(rank)
@@ -66,13 +62,16 @@ for con in arr:
             # else:
             #     rank = 0
 
+            text.append(description)
             data['Label'].append(int(rank))
+
+            # text.append(description)
+            # data['Label'].append(int(rank))
 
 data['Text'] = text
 df = pd.DataFrame(data)
 texts = df['Text'].astype(str)
 y = df['Label']
-
 
 
 #using stemming to reduce word counts 
@@ -86,7 +85,7 @@ def my_preprocessor(text):
 #using min_df=0.01 as there are 162 documents (rows), so will be accepted if appears more than once
 #strip_accents to remove Korean words
 #preprocessor = my_preprocessor -> lower accuracy
-vectorizer = CountVectorizer(stop_words= 'english', min_df=0.01)
+vectorizer = CountVectorizer(stop_words= 'english', min_df=0.01, preprocessor=my_preprocessor)
 X = vectorizer.fit_transform(texts)
 
 #filtering out words
