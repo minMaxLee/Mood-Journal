@@ -8,7 +8,6 @@ from sklearn.svm import LinearSVC
 import re
 from nltk.stem.porter import PorterStemmer
 
-
 #extract json file into python 
 with open(os.path.dirname(__file__) + '../media.json') as f:
     data = json.load(f)
@@ -16,12 +15,19 @@ with open(os.path.dirname(__file__) + '../media.json') as f:
 arr = data['photos']
 arr.reverse()
 
+
+# df = pd.DataFrame({'my_dates':['2015-01-01','2015-01-02','2015-01-03'],'myvals':[1,2,3]})
+# df['my_dates'] = pd.to_datetime(df['my_dates'])
+# df['day_of_week'] = df['my_dates'].dt.day_name()
+
+
+
 mood = []
 time = []
 text = []
 data = {'Text': [],
         'Label': [] }
-
+time_ind = []
 #extracting features and labels
 for con in arr:
     caption = con['caption']
@@ -29,7 +35,11 @@ for con in arr:
         if caption.find('[') != -1 and caption.find(']') != -1 and con['taken_at'] not in time:
             rank = caption[caption.index('[') + 1 : caption.index(']') ]
             description = caption[caption.index(']') + 1 : ]
+            cur_time = con['taken_at']
+            cur_time = cur_time[0 : 10]
             time.append(con['taken_at'])
+            time_ind.append(cur_time)
+
             # parsing mood label into integer
             if '+' in rank:
                 mood.append(int(rank))
@@ -68,6 +78,12 @@ for con in arr:
             # text.append(description)
             # data['Label'].append(int(rank))
 
+print(len(time))
+# time_ind = list(dict.fromkeys(time_ind))
+time_df = pd.to_datetime(time_ind, format = '%Y%m%d', errors='ignore')
+print(time_df)
+
+#convert to pd df
 data['Text'] = text
 df = pd.DataFrame(data)
 texts = df['Text'].astype(str)
